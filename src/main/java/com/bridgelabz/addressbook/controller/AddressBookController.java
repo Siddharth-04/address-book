@@ -3,23 +3,26 @@ package com.bridgelabz.addressbook.controller;
 import com.bridgelabz.addressbook.dto.AddressBookDTO;
 import com.bridgelabz.addressbook.dto.ResponseDTO;
 import com.bridgelabz.addressbook.service.AddressBookServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("addressbook/")
+@Validated
 public class AddressBookController {
 
     @Autowired
     AddressBookServiceImpl addressBookService;
 
     @PostMapping("createuser")
-    public ResponseDTO createUser(@RequestBody AddressBookDTO dto){
+    public ResponseDTO createUser(@Valid @RequestBody AddressBookDTO dto){
         return addressBookService.addUser(dto);
     }
 
     @PutMapping("updateuser/{id}")
-    public ResponseDTO updateUser(@RequestBody AddressBookDTO dto, @PathVariable Long id){
+    public ResponseDTO updateUser(@Valid @RequestBody AddressBookDTO dto, @PathVariable Long id){
         return addressBookService.updateUser(dto,id);
     }
 
