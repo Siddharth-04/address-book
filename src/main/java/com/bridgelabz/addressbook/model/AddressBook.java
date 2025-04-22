@@ -1,6 +1,7 @@
 package com.bridgelabz.addressbook.model;
 
 import com.bridgelabz.addressbook.dto.AddressBookDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,11 @@ public class AddressBook {
     @CollectionTable(name = "user_emails",joinColumns = @JoinColumn(name = "id"))
     @Column(name = "email")
     private List<String> emailAdress;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     public AddressBook() {
 

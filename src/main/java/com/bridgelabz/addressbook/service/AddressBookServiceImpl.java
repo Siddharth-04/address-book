@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -18,54 +19,66 @@ public class AddressBookServiceImpl implements IAddressBookService{
     AddressBookRepository addressBookRepository;
 
     @Override
-    public ResponseDTO addUser(AddressBookDTO addressBookDTO) {
-        AddressBook addressBook = new AddressBook(addressBookDTO);
+    public ResponseDTO addBook(AddressBook addressBook) {
         addressBookRepository.save(addressBook);
         log.info("User created successfully !");
-        return new ResponseDTO("User created successfully",addressBookDTO);
+        return new ResponseDTO("User created successfully",addressBook);
     }
 
     @Override
-    public ResponseDTO deleteUser(Long id) {
+    public ResponseDTO deleteBook(Long id,Long userId) {
         Optional<AddressBook> obj = addressBookRepository.findById(id);
         if(obj.isPresent()){
+            AddressBook addressbook = obj.get();
+
+            if(!addressbook.getUser().getId().equals(userId)){
+                return new ResponseDTO("User not authenticated !", HttpStatus.UNAUTHORIZED);
+            }
             addressBookRepository.deleteById(id);
-            return new ResponseDTO("User deleted successfully !", HttpStatus.OK);
+            return new ResponseDTO("AddressBook deleted successfully !", HttpStatus.OK);
+        }
+
+        return new ResponseDTO("AddressBook not found with this id :"+id,HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public ResponseDTO viewBook(Long id,Long userId) {
+        Optional<AddressBook> obj = addressBookRepository.findById(id);
+        if(obj.isPresent()){
+            AddressBook addressbook = obj.get();
+            if(!addressbook.getUser().getId().equals(userId)){
+                return new ResponseDTO("User not authenticated",HttpStatus.UNAUTHORIZED);
+            }
+            return new ResponseDTO("AddressBook fetched successfully !", addressbook);
         }
 
         return new ResponseDTO("User not found with this id :"+id,HttpStatus.NOT_FOUND);
     }
 
     @Override
-    public ResponseDTO viewUser(Long id) {
+    public ResponseDTO updateAddressBook(AddressBookDTO addressBookDTO, Long id, Long userId) {
         Optional<AddressBook> obj = addressBookRepository.findById(id);
-        if(obj.isPresent()){
-            AddressBook user = obj.get();
-            return new ResponseDTO("User deleted successfully !", user);
-        }
 
-        return new ResponseDTO("User not found with this id :"+id,HttpStatus.NOT_FOUND);
-    }
-
-    @Override
-    public ResponseDTO updateUser(AddressBookDTO addressBookDTO, Long id) {
-        Optional<AddressBook> obj = addressBookRepository.findById(id);
         if(obj.isPresent()){
-            AddressBook user = obj.get();
+            AddressBook addressbook = obj.get();
+
+            if(!addressbook.getUser().getId().equals(userId)){
+                return new ResponseDTO("User not authenticated !", HttpStatus.UNAUTHORIZED);
+            }
             if(addressBookDTO.getName() != null){
-                user.setName(addressBookDTO.getName());
+                addressbook.setName(addressBookDTO.getName());
             }
             if(addressBookDTO.getEmailAddress() != null){
-                user.setEmailAdress(addressBookDTO.getEmailAddress());
+                addressbook.setEmailAdress(addressBookDTO.getEmailAddress());
             }
             if(addressBookDTO.getPhoneNo() != null){
-                user.setPhoneNo(addressBookDTO.getPhoneNo());
+                addressbook.setPhoneNo(addressBookDTO.getPhoneNo());
             }
 
-            addressBookRepository.save(user);
-            return new ResponseDTO("User updated successfully !", user);
+            addressBookRepository.save(addressbook);
+            return new ResponseDTO("AddressBook updated successfully !", addressbook);
         }
 
-        return new ResponseDTO("Error updating user !", HttpStatus.NOT_FOUND);
+        return new ResponseDTO("Error updating addressBook !", HttpStatus.NOT_FOUND);
     }
 }
