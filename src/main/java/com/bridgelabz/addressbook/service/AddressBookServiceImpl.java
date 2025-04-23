@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,9 +19,18 @@ public class AddressBookServiceImpl implements IAddressBookService{
     @Autowired
     AddressBookRepository addressBookRepository;
 
+    @Autowired
+    EmailService emailService;
+
     @Override
     public ResponseDTO addBook(AddressBook addressBook) {
         addressBookRepository.save(addressBook);
+        List<String> emailAdress = addressBook.getEmailAdress();
+
+        for(String s : emailAdress){
+            emailService.sendEmail(s,"Welcome to AddressBook App","Dear User,thanks for using our app !");
+        }
+
         log.info("User created successfully !");
         return new ResponseDTO("User created successfully",addressBook);
     }
