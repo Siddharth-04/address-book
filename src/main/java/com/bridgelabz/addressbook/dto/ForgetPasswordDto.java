@@ -3,8 +3,6 @@ package com.bridgelabz.addressbook.dto;
 import lombok.Data;
 
 @Data
-public class ResetPasswordDto {
+public class ForgetPasswordDto {
     String userEmail;
-    String token;
-    String password;
 }

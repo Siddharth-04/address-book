@@ -1,6 +1,6 @@
 package com.bridgelabz.addressbook.service;
 
-import com.bridgelabz.addressbook.dto.ResetPasswordDto;
+import com.bridgelabz.addressbook.dto.ChangePasswordDto;
 import com.bridgelabz.addressbook.dto.ResponseDTO;
 import com.bridgelabz.addressbook.dto.UserDto;
 import com.bridgelabz.addressbook.model.User;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         return new ResponseDTO("User not found", HttpStatus.NOT_FOUND);
     }
 
-    public ResponseDTO resetPassword(ResetPasswordDto user,User exiistingUser){
+    public ResponseDTO changePassword(ChangePasswordDto user, User exiistingUser){
         String password = passEncoder.encode(user.getPassword());
         exiistingUser.setPassword(password);
         userRepository.save(exiistingUser);

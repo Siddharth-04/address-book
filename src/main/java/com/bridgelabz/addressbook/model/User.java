@@ -19,6 +19,8 @@ public class User {
 
     String userName;
     String password;
+    String userEmail;
+    String token;
 
     @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
             @JsonIgnore
@@ -35,6 +37,8 @@ public class User {
     public void updateUser(UserDto dto){
         this.setPassword( dto.getPassword());
         this.setUserName(dto.getUserName());
+        this.setUserEmail(dto.getUserEmail());
+        this.setToken(dto.getToken());
         this.setUserAddressBook(new ArrayList<>());
     }
 

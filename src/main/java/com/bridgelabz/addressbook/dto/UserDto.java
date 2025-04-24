@@ -9,5 +9,7 @@ import java.util.List;
 public class UserDto {
     String userName;
     String password;
+    String userEmail;
+    String token;
     List<AddressBook> userAddressBook;
 }
