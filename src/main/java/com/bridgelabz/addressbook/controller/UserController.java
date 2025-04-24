@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,8 @@ public class UserController {
     private UserDetailsService userDetailsService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PutMapping("change-password")
     public ResponseDTO changePassword(@RequestBody ChangePasswordDto user){
@@ -37,6 +40,12 @@ public class UserController {
 
         if(existingUser ==null){
             return new ResponseDTO("User not found",HttpStatus.NOT_FOUND);
+        }
+
+        boolean check = passwordEncoder.matches(user.getOldPassword(),existingUser.getPassword());
+
+        if(!check){
+            return new ResponseDTO("Old password is wrong",HttpStatus.UNAUTHORIZED);
         }
 
         return userService.changePassword(user,existingUser);
